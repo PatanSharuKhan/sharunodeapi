@@ -9,6 +9,9 @@ app.use(express.json());
 const dbPath = path.join(__dirname, "todoApplication.db");
 let db = null;
 
+const name = "name";
+const age = 20;
+
 const initializeServer = async () => {
   db = await open({
     filename: dbPath,
@@ -23,7 +26,7 @@ module.exports = app;
 
 //get all todo
 app.get("/todos/all/", async (req, res) => {
-  const query = `SELECT * FROM todo ;`;
+  const query = `SELECT * FROM todo;`;
   const todo = await db.all(query);
   res.send(todo);
 });
@@ -31,14 +34,19 @@ app.get("/todos/all/", async (req, res) => {
 //add todo
 app.post("/todos/", async (req, res) => {
   const { id, todo, priority, status } = req.body;
-  const insertQuery = `INSERT INTO todo (id,todo,priority,status)VALUES(${id},"${todo}","${priority}","${status}");`;
-  await db.run(insertQuery);
-  res.send("Todo Successfully Added");
+  const query = `SELECT * FROM todo WHERE id=${id}`;
+  const queryStatus = await db.get(query);
+  if (queryStatus === undefined) {
+    const insertQuery = `INSERT INTO todo (id,todo,priority,status)VALUES(${id},"${todo}","${priority}","${status}");`;
+    const data = await db.run(insertQuery);
+    res.send("Todo Successfully Added");
+  } else {
+    res.send("Todo with id already exist");
+  }
 });
 
 //get todo where status is TODO
 app.get("/todos/", async (req, res) => {
-  console.log(__dirname);
   const { status = "%%", priority = "%%", search_q = "%%" } = req.query;
   const query = `SELECT * FROM todo WHERE status LIKE "${status}" AND priority LIKE "${priority}" AND todo LIKE "%${search_q}%";`;
   const todo = await db.all(query);

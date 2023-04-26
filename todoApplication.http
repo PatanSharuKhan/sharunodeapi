@@ -10,8 +10,6 @@ GET http://localhost:3000/todos/?search_q=Play
 GET http://localhost:3000/todos/all/
 ###
 
-GET http://localhost:3000/todos/add/
-###
 
 GET http://localhost:3000/todos/1/
 ###
@@ -20,7 +18,7 @@ POST http://localhost:3000/todos/
 Content-Type: application/json
 
 {
-  "id": 10,
+  "id": 1000,
   "todo": "Finalize event theme",
   "priority": "LOW",
   "status": "TO DO"
